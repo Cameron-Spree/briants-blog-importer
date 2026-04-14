@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Convert raw blog posts into a WP All Import-ready CSV file. Paste, compile, download.">
+  <title>Blog-to-CSV Compiler | Briant's Importer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient background blobs -->
+  <div class="bg-blob blob-1" aria-hidden="true"></div>
+  <div class="bg-blob blob-2" aria-hidden="true"></div>
+  <div class="bg-blob blob-3" aria-hidden="true"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header" id="app-header">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>Blog-to-CSV Compiler</h1>
+        <p class="header-subtitle">Paste your posts &middot; Compile &middot; Download a WP All Import-ready CSV</p>
+      </div>
+    </header>
+
+    <!-- Instructions Card -->
+    <section class="instructions-card" id="instructions-card">
+      <button class="instructions-toggle" id="instructions-toggle" aria-expanded="false" aria-controls="instructions-body">
+        <span class="instructions-toggle-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </span>
+        <span>How to format your posts</span>
+        <span class="chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </button>
+      <div class="instructions-body" id="instructions-body">
+        <div class="instructions-grid">
+          <div class="instruction-item">
+            <span class="instruction-num">1</span>
+            <div>
+              <strong>Title</strong>
+              <p>First non-empty line of each block</p>
+            </div>
+          </div>
+          <div class="instruction-item">
+            <span class="instruction-num">2</span>
+            <div>
+              <strong>Category</strong>
+              <p>Second non-empty line</p>
+            </div>
+          </div>
+          <div class="instruction-item">
+            <span class="instruction-num">3</span>
+            <div>
+              <strong>Content</strong>
+              <p>Everything after &mdash; <code>## headings</code> become <code>&lt;h2&gt;</code></p>
+            </div>
+          </div>
+          <div class="instruction-item">
+            <span class="instruction-num">###</span>
+            <div>
+              <strong>Separator</strong>
+              <p>Place <code>###</code> on its own line between posts</p>
+            </div>
+          </div>
+        </div>
+        <div class="example-block">
+          <p class="example-label">Example</p>
+<pre>My First Blog Post
+Gardening
+## Introduction
+Welcome to my first post about gardening tips.
+
+## Getting Started
+Here is how you begin...
+###
+My Second Blog Post
+Lifestyle
+This is the content of the second post.</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Input Area -->
+    <section class="input-section" id="input-section">
+      <label for="blog-input" class="input-label">Paste your blog posts below</label>
+      <textarea
+        id="blog-input"
+        class="blog-textarea"
+        placeholder="Paste your blog posts here, separated by ### ..."
+        spellcheck="false"
+      ></textarea>
+      <div class="textarea-footer">
+        <span class="char-count" id="char-count">0 characters</span>
+        <button class="btn-clear" id="btn-clear" title="Clear input">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Clear
+        </button>
+      </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <div class="actions" id="actions">
+      <button class="btn btn-compile" id="btn-compile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Compile Posts
+      </button>
+      <button class="btn btn-download" id="btn-download" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CSV
+      </button>
+    </div>
+
+    <!-- Status / Preview -->
+    <div class="status-bar" id="status-bar" hidden>
+      <div class="status-content">
+        <span class="status-icon" id="status-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </span>
+        <span class="status-text" id="status-text"></span>
+      </div>
+    </div>
+
+    <!-- Preview Table -->
+    <section class="preview-section" id="preview-section" hidden>
+      <h2 class="preview-heading">Preview</h2>
+      <div class="table-wrap">
+        <table class="preview-table" id="preview-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Slug</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="preview-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Built for WP All Import &middot; UTF-8 Encoded &middot; PHP 8.2 Ready</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
