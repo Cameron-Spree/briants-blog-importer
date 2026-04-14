@@ -17,7 +17,9 @@
   <div class="bg-blob blob-3" aria-hidden="true"></div>
 
   <div class="app-container">
-    <!-- Header -->
+    <div class="layout-wrapper">
+      <main class="main-content">
+        <!-- Header -->
     <header class="app-header" id="app-header">
       <div class="header-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -89,6 +91,10 @@ Here is how you begin...
 My Second Blog Post
 Lifestyle
 This is the content of the second post.</pre>
+          <button class="btn-prompt" id="btn-prompt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy AI Prompt
+          </button>
         </div>
       </div>
     </section>
@@ -106,7 +112,7 @@ This is the content of the second post.</pre>
         <span class="char-count" id="char-count">0 characters</span>
         <button class="btn-clear" id="btn-clear" title="Clear input">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          Clear
+          Clear Input Text
         </button>
       </div>
     </section>
@@ -115,11 +121,15 @@ This is the content of the second post.</pre>
     <div class="actions" id="actions">
       <button class="btn btn-compile" id="btn-compile">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        Compile Posts
+        Add Post(s)
       </button>
       <button class="btn btn-download" id="btn-download" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download CSV
+      </button>
+      <button class="btn btn-reset" id="btn-reset" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+        Reset Session
       </button>
     </div>
 
@@ -157,6 +167,22 @@ This is the content of the second post.</pre>
     <footer class="app-footer">
       <p>Built for WP All Import &middot; UTF-8 Encoded &middot; PHP 8.2 Ready</p>
     </footer>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h2>Added Posts</h2>
+          <span class="badge" id="sidebar-badge">0</span>
+        </div>
+        <div class="sidebar-content" id="sidebar-content">
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <p>No posts added yet.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
   </div>
 
   <script src="app.js"></script>

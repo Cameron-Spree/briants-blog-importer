@@ -18,6 +18,10 @@
   const previewTbody   = document.getElementById('preview-tbody');
   const instrToggle    = document.getElementById('instructions-toggle');
   const instrBody      = document.getElementById('instructions-body');
+  const btnPrompt      = document.getElementById('btn-prompt');
+  const btnReset       = document.getElementById('btn-reset');
+  const sidebarContent = document.getElementById('sidebar-content');
+  const sidebarBadge   = document.getElementById('sidebar-badge');
 
   // --- State ---
   let compiledPosts = [];
@@ -238,18 +242,46 @@
     btnCompile.classList.toggle('pulse', len > 0);
   });
 
-  // Clear
+  // Clear Input Text
   btnClear.addEventListener('click', () => {
     textarea.value = '';
     charCount.textContent = '0 characters';
-    compiledPosts = [];
-    btnDownload.disabled = true;
-    statusBar.hidden = true;
-    previewSection.hidden = true;
-    previewTbody.innerHTML = '';
     btnCompile.classList.remove('pulse');
     textarea.focus();
   });
+
+  // Reset Session
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      if(confirm('Are you sure you want to clear all added posts? This cannot be undone.')) {
+        compiledPosts = [];
+        renderSidebar(compiledPosts);
+        renderPreview(compiledPosts);
+        btnDownload.disabled = true;
+        btnReset.disabled = true;
+        statusBar.hidden = true;
+        previewSection.hidden = true;
+      }
+    });
+  }
+
+  // Copy AI Prompt
+  if (btnPrompt) {
+    btnPrompt.addEventListener('click', () => {
+      const promptText = `I am converting blog posts to CSV. Please format your output exactly like this:
+The first non-empty line must be the Title.
+The second non-empty line must be the Category.
+Everything else is the Content. Use ## for subheadings.
+If generating multiple posts, separate them with a line containing only ###.`;
+      
+      navigator.clipboard.writeText(promptText).then(() => {
+        btnPrompt.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
+        setTimeout(() => {
+          btnPrompt.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy AI Prompt`;
+        }, 3000);
+      });
+    });
+  }
 
   // Instructions accordion
   instrToggle.addEventListener('click', () => {
@@ -258,35 +290,70 @@
     instrBody.classList.toggle('open', !isOpen);
   });
 
-  // Compile
+  // Add Post(s)
   btnCompile.addEventListener('click', () => {
     const raw = textarea.value.trim();
 
     if (!raw) {
-      showStatus('Please paste at least one blog post before compiling.', true);
-      previewSection.hidden = true;
-      btnDownload.disabled = true;
+      showStatus('Please paste at least one blog post before adding.', true);
       return;
     }
 
-    compiledPosts = parseInput(raw);
+    const newPosts = parseInput(raw);
 
-    if (compiledPosts.length === 0) {
+    if (newPosts.length === 0) {
       showStatus('No valid posts found. Each post needs at least a title and category.', true);
-      previewSection.hidden = true;
-      btnDownload.disabled = true;
       return;
     }
 
-    const count = compiledPosts.length;
-    showStatus(`${count} Blog${count !== 1 ? 's' : ''} Prepared — Ready to download!`);
-    renderPreview(compiledPosts);
-    btnDownload.disabled = false;
+    // Append to accumulator
+    compiledPosts.push(...newPosts);
+
+    // Clear textarea
+    textarea.value = '';
+    charCount.textContent = '0 characters';
     btnCompile.classList.remove('pulse');
 
-    // Smooth scroll to preview
-    previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const count = compiledPosts.length;
+    showStatus(`${newPosts.length} post(s) just added! (${count} total in batch)`);
+    renderPreview(compiledPosts);
+    renderSidebar(compiledPosts);
+    btnDownload.disabled = false;
+    btnReset.disabled = false;
   });
+
+  // Render Sidebar
+  function renderSidebar(posts) {
+    if (posts.length === 0) {
+      sidebarBadge.textContent = '0';
+      sidebarContent.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <p>No posts added yet.</p>
+      </div>`;
+      return;
+    }
+
+    sidebarBadge.textContent = posts.length.toString();
+
+    // Group posts by category
+    const grouped = {};
+    for (const p of posts) {
+      if (!grouped[p.post_category]) grouped[p.post_category] = [];
+      grouped[p.post_category].push(p);
+    }
+
+    // Build HTML
+    let html = '';
+    for (const cat in grouped) {
+      html += `<div class="sidebar-category"><h3>${escapeHtml(cat)}</h3>`;
+      for (const p of grouped[cat]) {
+        html += `<div class="sidebar-post" title="${escapeHtml(p.post_title)}">${escapeHtml(p.post_title)}</div>`;
+      }
+      html += `</div>`;
+    }
+
+    sidebarContent.innerHTML = html;
+  }
 
   // Download
   btnDownload.addEventListener('click', () => {
