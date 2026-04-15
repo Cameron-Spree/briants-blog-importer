@@ -401,6 +401,94 @@ body {
   background: #fef2f2;
 }
 
+/* ---------- Export Settings ---------- */
+.export-settings {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  animation: fadeSlideDown 0.6s 0.25s ease both;
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.settings-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.settings-header h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.date-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.date-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.date-field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.date-field input[type="date"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--text);
+  background: white;
+  transition: all var(--transition);
+}
+
+.date-field input[type="date"]:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.date-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  padding-top: 22px; /* align with inputs below labels */
+}
+
+.date-divider svg {
+  width: 20px;
+  height: 20px;
+}
+
+.settings-hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
 /* ---------- Actions ---------- */
 .actions {
   display: flex;

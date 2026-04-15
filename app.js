@@ -22,11 +22,20 @@
   const btnReset       = document.getElementById('btn-reset');
   const sidebarContent = document.getElementById('sidebar-content');
   const sidebarBadge   = document.getElementById('sidebar-badge');
+  const dateFrom       = document.getElementById('date-from');
+  const dateUntil      = document.getElementById('date-until');
 
   // --- State ---
   let compiledPosts = [];
 
   // --- Helpers ---
+
+  // Set default dates
+  const today = todayDate();
+  if (dateFrom && dateUntil) {
+    dateFrom.value = today;
+    dateUntil.value = today;
+  }
 
   /**
    * Generate a URL-safe slug from a title string.
@@ -355,9 +364,41 @@ If generating multiple posts, separate them with a line containing only ###.`;
     sidebarContent.innerHTML = html;
   }
 
+  // --- Date Distribution Logic ---
+  function distributeDates(posts) {
+    if (posts.length === 0) return;
+
+    const start = new Date(dateFrom.value);
+    const end = new Date(dateUntil.value);
+    
+    // Fallback if invalid dates
+    if (isNaN(start) || isNaN(end)) return;
+
+    if (posts.length === 1) {
+      posts[0].post_date = dateFrom.value;
+      return;
+    }
+
+    const diffTime = end.getTime() - start.getTime();
+    const step = diffTime / (posts.length - 1);
+
+    posts.forEach((post, i) => {
+      const postTime = start.getTime() + (step * i);
+      const d = new Date(postTime);
+      const yyyy = d.getFullYear();
+      const mm   = String(d.getMonth() + 1).padStart(2, '0');
+      const dd   = String(d.getDate()).padStart(2, '0');
+      post.post_date = `${yyyy}-${mm}-${dd}`;
+    });
+  }
+
   // Download
   btnDownload.addEventListener('click', () => {
     if (compiledPosts.length === 0) return;
+    
+    distributeDates(compiledPosts);
+    renderPreview(compiledPosts); // Update preview to show scheduled dates before download
+    
     const csv = buildCSV(compiledPosts);
     downloadCSV(csv);
   });
