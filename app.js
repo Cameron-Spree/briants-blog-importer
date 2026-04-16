@@ -24,6 +24,16 @@
   const sidebarBadge   = document.getElementById('sidebar-badge');
   const dateFrom       = document.getElementById('date-from');
   const dateUntil      = document.getElementById('date-until');
+  const categoryList   = document.getElementById('category-list');
+  const editModal      = document.getElementById('edit-modal');
+  const editPostId     = document.getElementById('edit-post-id');
+  const editPostTitle  = document.getElementById('edit-post-title');
+  const editPostCat    = document.getElementById('edit-post-category');
+  const editPostCont   = document.getElementById('edit-post-content');
+  const btnCloseModal  = document.getElementById('btn-close-modal');
+  const btnCancelModal = document.getElementById('btn-cancel-modal');
+  const btnSavePost    = document.getElementById('btn-save-post');
+  const btnDeletePost  = document.getElementById('btn-delete-post');
 
   // --- State ---
   let compiledPosts = [];
@@ -152,8 +162,10 @@
       const postSlug = slugify(title);
 
       posts.push({
+        id: Date.now().toString() + Math.random().toString().slice(2),
         post_title: title,
         post_content: postContent,
+        raw_content: contentLines.join('\n'),
         post_category: category,
         post_status: 'draft',
         post_type: 'post',
@@ -249,6 +261,77 @@
 
     // Add pulse to compile if there's content
     btnCompile.classList.toggle('pulse', len > 0);
+  });
+
+  // Edit Modal Event Handlers
+  sidebarContent.addEventListener('click', (e) => {
+    const postEl = e.target.closest('.sidebar-post');
+    if (!postEl) return;
+    
+    const id = postEl.getAttribute('data-id');
+    const post = compiledPosts.find(p => p.id === id);
+    if (!post) return;
+
+    editPostId.value = post.id;
+    editPostTitle.value = post.post_title;
+    editPostCat.value = post.post_category;
+    editPostCont.value = post.raw_content;
+
+    editModal.showModal();
+  });
+
+  const closeModal = () => {
+    editModal.close();
+    editPostId.value = '';
+    editPostTitle.value = '';
+    editPostCat.value = '';
+    editPostCont.value = '';
+  };
+
+  btnCloseModal.addEventListener('click', closeModal);
+  btnCancelModal.addEventListener('click', closeModal);
+
+  btnSavePost.addEventListener('click', () => {
+    const id = editPostId.value;
+    const postIndex = compiledPosts.findIndex(p => p.id === id);
+    if (postIndex === -1) return;
+
+    const title = editPostTitle.value.trim();
+    const cat = editPostCat.value.trim();
+    const raw = editPostCont.value;
+
+    if (!title || !cat) {
+      alert("Title and Category are required.");
+      return;
+    }
+
+    const post = compiledPosts[postIndex];
+    post.post_title = title;
+    post.post_slug = slugify(title);
+    post.post_category = cat;
+    post.raw_content = raw;
+    post.post_content = processContent(raw.split('\n'));
+
+    renderSidebar(compiledPosts);
+    renderPreview(compiledPosts);
+    closeModal();
+  });
+
+  btnDeletePost.addEventListener('click', () => {
+    if(!confirm("Are you sure you want to delete this post?")) return;
+    const id = editPostId.value;
+    compiledPosts = compiledPosts.filter(p => p.id !== id);
+    
+    renderSidebar(compiledPosts);
+    renderPreview(compiledPosts);
+    closeModal();
+    
+    if (compiledPosts.length === 0) {
+      btnDownload.disabled = true;
+      btnReset.disabled = true;
+      statusBar.hidden = true;
+      previewSection.hidden = true;
+    }
   });
 
   // Clear Input Text
@@ -351,12 +434,19 @@ If generating multiple posts, separate them with a line containing only ###.`;
       grouped[p.post_category].push(p);
     }
 
+    // Build Datalist
+    let datalistHtml = '';
+    for (const cat in grouped) {
+      datalistHtml += `<option value="${escapeHtml(cat)}"></option>`;
+    }
+    categoryList.innerHTML = datalistHtml;
+
     // Build HTML
     let html = '';
     for (const cat in grouped) {
       html += `<div class="sidebar-category"><h3>${escapeHtml(cat)}</h3>`;
       for (const p of grouped[cat]) {
-        html += `<div class="sidebar-post" title="${escapeHtml(p.post_title)}">${escapeHtml(p.post_title)}</div>`;
+        html += `<div class="sidebar-post" data-id="${escapeHtml(p.id)}" title="${escapeHtml(p.post_title)}">${escapeHtml(p.post_title)}</div>`;
       }
       html += `</div>`;
     }

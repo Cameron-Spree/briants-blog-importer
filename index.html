@@ -207,6 +207,43 @@ This is the content of the second post.</pre>
     </div>
   </div>
 
+  <!-- Dynamic Datalist for Categories -->
+  <datalist id="category-list"></datalist>
+
+  <!-- Edit Post Modal -->
+  <dialog id="edit-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Post</h2>
+        <button class="btn-close-modal" id="btn-close-modal" title="Close" aria-label="Close modal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-post-id">
+        <div class="form-group">
+          <label for="edit-post-title">Title</label>
+          <input type="text" id="edit-post-title" class="modal-input">
+        </div>
+        <div class="form-group">
+          <label for="edit-post-category">Category</label>
+          <input type="text" id="edit-post-category" class="modal-input" list="category-list" placeholder="Choose or type a new one...">
+        </div>
+        <div class="form-group">
+          <label for="edit-post-content">Raw Content</label>
+          <textarea id="edit-post-content" class="modal-textarea" spellcheck="false" placeholder="Content..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="btn-delete-post">Delete Post</button>
+        <div class="footer-actions">
+          <button class="btn btn-cancel" id="btn-cancel-modal">Cancel</button>
+          <button class="btn btn-save" id="btn-save-post">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
   <script src="app.js"></script>
 </body>
 </html>
